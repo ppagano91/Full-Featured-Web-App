@@ -1,0 +1,14 @@
+form.hidden_tag(): add a cross-site request forgery token
+.label(class="form-control-label"): print out the label from our username field
+
+flash: it is like alerts on javascripts. Also need de jira script on the html page
+
+Example
+
+ON PYTHON SCRIPT: flash(<message>,<category>)
+ON HTML TEMPLATE: {% with messages = get_flashed_messages(with_categories=true)%}
+
+
+
+url_for: you need to pass the name of the function, no the path
+redirect(url_for('home'))
