@@ -12,3 +12,14 @@ ON HTML TEMPLATE: {% with messages = get_flashed_messages(with_categories=true)%
 
 url_for: you need to pass the name of the function, no the path
 redirect(url_for('home'))
+
+Diferencias entre crear un modelo con db.Model o con declarative_base():
+https://stackoverflow.com/questions/22698478/what-is-the-difference-between-the-declarative-base-and-db-model
+
+pip install sqlalchemy-utils
+
+
+
+No pude crear una base de datos con sqlalchemy para luego crear las tablas
+# engine = create_engine('postgresql+psycopg2://postgres@localhost/db_flaskblog')
+# engine.connect()
