@@ -1,22 +1,28 @@
 from datetime import datetime
-from flaskblog import db
+from flaskblog import db, login_manager
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+    # min 23:30 SEGUIR
 
+# Una vez que se establecieron los tipos de datos no se pueden cambiar. Cambiar desde SQL
 class User(db.Model):
     __tablename__="Users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(60), unique=True, nullable=False)
     image_file = db.Column(db.String(20), default="default.jpg")
 
     # El password será hasheado por lo tanto necesita más caracteres
-    password = db.Column(db.String(60), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
 
     # relationship('Post'...): hace referencia al modelo creado, no a la tabla, por lo tanto va en mayúsucla.
-    posts = db.relationship("Post", backref="author", lazy="True")
+    posts = db.relationship("Post", backref="author", lazy=True)
+
 
     def __repr__(self):
-        return f"User('{self.username}', User'{self.email}', User'{self.email}', User'{self.image_file}')"
+        return f"User('{self.username}', User'{self.email}', User'{self.image_file}')"
 
 
 class Post(db.Model):

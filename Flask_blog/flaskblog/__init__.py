@@ -1,5 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 # import sqlalchemy
 
 # import secrets
@@ -17,6 +19,13 @@ app.config['SQLALCHEMY_DATABASE_URI']= "postgresql+psycopg2://postgres@localhost
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 
 db = SQLAlchemy(app)
+
+# Bycrypt
+bcrypt = Bcrypt(app)
+
+# Login
+login_manager = LoginManager(app)
+
 # db.create_engine('postgresql+psycopg2://postgres@localhost/db_flaskblog',{})
 # Crear una instancia del base de datos
 # SQL Alchemy representa la estrucutra de base de datos mediante clases llamadas módulos
