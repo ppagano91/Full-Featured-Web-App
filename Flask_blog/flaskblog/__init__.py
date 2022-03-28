@@ -25,6 +25,9 @@ bcrypt = Bcrypt(app)
 
 # Login
 login_manager = LoginManager(app)
+# login_manager.login_view='<function name of a route>'
+login_manager.login_view='login'
+login_manager.login_message_category='info'
 
 # db.create_engine('postgresql+psycopg2://postgres@localhost/db_flaskblog',{})
 # Crear una instancia del base de datos
