@@ -23,3 +23,5 @@ pip install sqlalchemy-utils
 No pude crear una base de datos con sqlalchemy para luego crear las tablas
 # engine = create_engine('postgresql+psycopg2://postgres@localhost/db_flaskblog')
 # engine.connect()
+
+pip install Pillow
