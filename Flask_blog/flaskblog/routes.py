@@ -2,33 +2,37 @@ import os
 import secrets
 
 from PIL import Image
-from flask import Flask, render_template,url_for,flash,redirect,request
+
+from flask import Flask, render_template,url_for,flash,redirect,request, abort
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostsForm
 from flaskblog.models.models import User,Post
 
 # For Login
 from flask_login import login_user, current_user, logout_user, login_required
 
 
-posts=[{
-    "author":"Corey Schafer",
-    "title":"Blog post 1",
-    "content":"First post content",
-    "date_posted":"April 20,2018"
-},
-{
-    "author":"Jane Doe",
-    "title":"Blog post 2",
-    "content":"Second post content",
-    "date_posted":"April 21,2018"
-}]
+
+#  Dummy data
+# posts=[{
+#     "author":"Corey Schafer",
+#     "title":"Blog post 1",
+#     "content":"First post content",
+#     "date_posted":"April 20,2018"
+# },
+# {
+#     "author":"Jane Doe",
+#     "title":"Blog post 2",
+#     "content":"Second post content",
+#     "date_posted":"April 21,2018"
+# }]
 
 
 
 @app.route("/")
 @app.route("/home")
 def home():
+    posts=Post.query.all()
     return render_template("home.html", posts=posts)
 
 
@@ -36,14 +40,21 @@ def home():
 def about():
     return render_template("about.html", title="About")
 
+
+# REGISTER
 @app.route("/register", methods=["POST","GET"])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
+    # Se crea una instancia de la clase RegistrationForm, la cual se utiliza para hacer el formulario (labels e inputs) en register.html
     form=RegistrationForm()
+
+    # Si el formulario es válido, todos los campos requeridos están completos, este if es True
+    # En caso contrario aparecerán los avisos de campos incompletos
     if form.validate_on_submit():
         # decode('utf-8'): para cambiar el hash de bytes a string
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+
         user=User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
@@ -110,3 +121,67 @@ def account():
         form.email.data=current_user.email
     image_file=url_for('static', filename='profile_pics/'+current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file, form=form)
+
+
+@app.route("/posts/new", methods=['GET','POST'])
+@login_required
+def new_post():
+    form=PostsForm()
+
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post has been created!','success')
+        return redirect(url_for('home'))
+
+    return render_template('create_post.html', title='New Post', form=form, legened="New post")
+
+
+
+@app.route("/posts/<int:post_id>", methods=['GET','POST'])
+def post(post_id):
+    post=Post.query.get_or_404(post_id)
+    return render_template('post.html', title=post.title, post=post)
+
+
+@app.route("/posts/<int:post_id>/update", methods=['GET','POST'])
+@login_required
+def update_post(post_id):
+    post=Post.query.get_or_404(post_id)
+
+    if post.author !=current_user:
+        abort(403)
+
+    form = PostsForm()
+
+    if form.validate_on_submit():
+        # Guardar/Actualizar los datos en la BD
+        post.title=form.title.data
+        post.content=form.content.data
+        db.session.commit()
+        flash('Your post has been updated!',"success")
+        return redirect(url_for('post',post_id=post.id))
+
+    elif request.method== "GET":
+        # Inicializar los datos del formulario con lo que haya en la Tabla Posts de la BD
+        form.title.data=post.title
+        form.content.data=post.content
+
+
+    return render_template('create_post.html', title="Update post", form=form, legened="Update post")
+
+
+@app.route("/posts/<int:post_id>/delete", methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post=Post.query.get_or_404(post_id)
+
+    if post.author !=current_user:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+
+    flash("Your post has been deleted!","success")
+
+    return redirect(url_for('home'))
