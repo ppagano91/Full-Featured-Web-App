@@ -19,9 +19,9 @@ https://stackoverflow.com/questions/22698478/what-is-the-difference-between-the-
 pip install sqlalchemy-utils
 
 
+{{form.hidden_tag()}}: "it's adding something called a Cross-Site Request Forgery (CSRF) token". Está asociado con la SECRET_KEY, es para proteger el formulario de ataques
 
-No pude crear una base de datos con sqlalchemy para luego crear las tablas
-# engine = create_engine('postgresql+psycopg2://postgres@localhost/db_flaskblog')
-# engine.connect()
+
+
 
 pip install Pillow
