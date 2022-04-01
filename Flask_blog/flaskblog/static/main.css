@@ -30,6 +30,8 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid #dddddd;
   border-radius: 3px;
   margin-bottom: 20px;
+
+
 }
 
 .article-title {
@@ -54,7 +56,13 @@ a.article-title:hover {
 .article-metadata {
   padding-bottom: 1px;
   margin-bottom: 4px;
-  border-bottom: 1px solid #e3e3e3
+  border-bottom: 1px solid #e3e3e3;
+
+}
+
+.article-metadata a{
+  /* font-size: large; */
+  text-decoration: none;
 }
 
 .article-metadata a:hover {
@@ -81,4 +89,10 @@ a.article-title:hover {
 
 .nav{
   justify-content: space-between;
+}
+
+.media-body{
+  display: flex;
+  flex-direction: column;
+  display: block;
 }

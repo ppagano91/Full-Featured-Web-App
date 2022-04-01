@@ -6,11 +6,15 @@ from flask_login import LoginManager
 
 # import secrets
 # from sqlalchemy import create_engine, MetaData
-# from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy_utils import database_exists, create_database
 # from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
 
 
 app = Flask(__name__)
+
+# Configurar del Motor de base de datos (engine database)
+engine = create_engine("postgresql+psycopg2://postgres@localhost/db_flaskblog")
 
 # Clave secreta para proteger de cookies, peticiones cruzadas, amenazas, etc
 # print(secrets.token_hex(16))
@@ -32,6 +36,12 @@ login_manager.login_message_category='info'
 # db.create_engine('postgresql+psycopg2://postgres@localhost/db_flaskblog',{})
 # Crear una instancia del base de datos
 # SQL Alchemy representa la estrucutra de base de datos mediante clases llamadas módulos
+# Crear la Base de Datos
 
+if not database_exists(engine.url):
+    create_database(engine.url)
+
+# Crear las tablas definidas como modelos
+db.create_all()
 
 from flaskblog import routes
