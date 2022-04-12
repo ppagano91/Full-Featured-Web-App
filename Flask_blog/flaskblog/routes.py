@@ -39,7 +39,8 @@ def home():
     # posts=Post.query.all()
 
     # Obtener los datos por páginas, 5 post por página --> para ver: http://127.0.0.1:5000/?page=<number>
-    posts=Post.query.paginate(per_page=5,page=page)
+    # posts=Post.query.paginate(per_page=5,page=page)
+    posts=Post.query.order_by(Post.date_posted.desc()).paginate(per_page=5,page=page)
     return render_template("home.html", posts=posts)
 
 
@@ -192,3 +193,13 @@ def delete_post(post_id):
     flash("Your post has been deleted!","success")
 
     return redirect(url_for('home'))
+
+
+@app.route("/user/<string:username>")
+def user_posts(username):
+    page=request.args.get('page',default=1,type=int)
+    user=User.query.filter_by(username=username).first_or_404()
+    posts=Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate(per_page=5,page=page)
+    return render_template("user_posts.html", posts=posts, user=user)
