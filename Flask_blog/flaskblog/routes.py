@@ -32,7 +32,14 @@ from flask_login import login_user, current_user, logout_user, login_required
 @app.route("/")
 @app.route("/home")
 def home():
-    posts=Post.query.all()
+    # Obtener la página del html
+    page=request.args.get('page',default=1,type=int)
+
+    # Obtener todos los datos
+    # posts=Post.query.all()
+
+    # Obtener los datos por páginas, 5 post por página --> para ver: http://127.0.0.1:5000/?page=<number>
+    posts=Post.query.paginate(per_page=5,page=page)
     return render_template("home.html", posts=posts)
 
 
