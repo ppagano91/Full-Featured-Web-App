@@ -43,9 +43,10 @@ app.config['MAIL_USE_TLS'] = True
 
 # ENVIROMENT VARIABLES: https://www.youtube.com/watch?v=IolxqkL7cD8
 load_dotenv()
-app.config['MAIL_USERNAME'] = os.environ['EMAIL_USER']
-app.config['MAIL_PASSWORD'] = os.environ['EMAIL_PASSWORD']
+app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
 
+# Acceso de aplicaciones menos seguras en Google para enviar mail
 mail=Mail(app)
 
 
