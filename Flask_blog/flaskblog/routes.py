@@ -4,12 +4,15 @@ import secrets
 from PIL import Image
 
 from flask import Flask, render_template,url_for,flash,redirect,request, abort
-from flaskblog import app, db, bcrypt
+from flaskblog import app, db, bcrypt, mail
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostsForm, RequestResetForm, ResetPasswordForm
 from flaskblog.models.models import User,Post
 
 # For Login
 from flask_login import login_user, current_user, logout_user, login_required
+
+# For mail
+from flask_mail import Message
 
 
 
@@ -206,7 +209,20 @@ def user_posts(username):
 
 
 def send_reset_email(user):
-    pass
+    token=user.get_reset_token()
+    # print("token: ",token)
+    # print("user.email: ", user.email)
+    msg=Message('Password Reset Request',
+                sender="pagano.patricio@gmail.com",
+                recipients=[user.email])
+    msg.body=f'''To Reset your password, visit the following link:
+    {url_for('reset_token', token=token, _external=True)}
+
+    If you did no make this request then simply ignore this email and no changes will be made.
+    '''
+
+    mail.send(msg)
+
 
 @app.route("/reset_password", methods=['GET','POST'])
 def reset_request():
@@ -235,5 +251,12 @@ def reset_token(token):
         return redirect(url_for('reset_request'))
 
     form = ResetPasswordForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password=hashed_password
+        db.session.commit()
+        flash('Your password has been updated! You are now able to log in','success')
+        return redirect(url_for('login'))
     return render_template('reset_token.html', title="Reset Password", form=form)
 
