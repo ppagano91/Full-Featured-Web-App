@@ -62,4 +62,12 @@ if not database_exists(engine.url):
 # Crear las tablas definidas como modelos
 db.create_all()
 
-from flaskblog import routes
+from flaskblog.users.routes import users
+from flaskblog.posts.routes import posts
+from flaskblog.main.routes import main
+
+app.register_blueprint(users)
+app.register_blueprint(posts)
+app.register_blueprint(main)
+
+
