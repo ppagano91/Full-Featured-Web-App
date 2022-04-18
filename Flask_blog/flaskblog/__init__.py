@@ -17,21 +17,20 @@ from sqlalchemy import create_engine
 
 
 
-app = Flask(__name__)
-app.config.from_object(Config)
+
 
 # Configurar del Motor de base de datos (engine database)
-engine = create_engine("postgresql+psycopg2://postgres@localhost/db_flaskblog")
 
 
 
-db = SQLAlchemy(app)
+
+db = SQLAlchemy()
 
 # Bycrypt
-bcrypt = Bcrypt(app)
+bcrypt = Bcrypt()
 
 # Login
-login_manager = LoginManager(app)
+login_manager = LoginManager()
 # login_manager.login_view='<function name of a route>'
 login_manager.login_view='users.login'
 login_manager.login_message_category='info'
@@ -39,7 +38,7 @@ login_manager.login_message_category='info'
 
 
 # Acceso de aplicaciones menos seguras en Google para enviar mail
-mail=Mail(app)
+mail=Mail()
 
 
 
@@ -48,18 +47,41 @@ mail=Mail(app)
 # SQL Alchemy representa la estrucutra de base de datos mediante clases llamadas módulos
 # Crear la Base de Datos
 
-if not database_exists(engine.url):
-    create_database(engine.url)
 
-# Crear las tablas definidas como modelos
-db.create_all()
 
-from flaskblog.users.routes import users
-from flaskblog.posts.routes import posts
-from flaskblog.main.routes import main
 
-app.register_blueprint(users)
-app.register_blueprint(posts)
-app.register_blueprint(main)
 
+
+
+
+
+
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    engine = create_engine("postgresql+psycopg2://postgres@localhost/db_flaskblog")
+
+    db.init_app(app)
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
+    mail.init_app(app)
+
+    from flaskblog.users.routes import users
+    from flaskblog.posts.routes import posts
+    from flaskblog.main.routes import main
+
+    app.register_blueprint(users)
+    app.register_blueprint(posts)
+    app.register_blueprint(main)
+
+
+    if not database_exists(engine.url):
+        create_database(engine.url)
+    # Crear las tablas definidas como modelos
+    with app.app_context():
+        # https://stackoverflow.com/questions/46540664/no-application-found-either-work-inside-a-view-function-or-push-an-application
+        db.create_all()
+
+    return app
 
