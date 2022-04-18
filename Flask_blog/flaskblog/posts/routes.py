@@ -20,7 +20,7 @@ def new_post():
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!','success')
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
 
     return render_template('create_post.html', title='New Post', form=form, legened="New post")
 
@@ -48,7 +48,7 @@ def update_post(post_id):
         post.content=form.content.data
         db.session.commit()
         flash('Your post has been updated!',"success")
-        return redirect(url_for('post',post_id=post.id))
+        return redirect(url_for('posts.post',post_id=post.id))
 
     elif request.method== "GET":
         # Inicializar los datos del formulario con lo que haya en la Tabla Posts de la BD
@@ -71,4 +71,4 @@ def delete_post(post_id):
 
     flash("Your post has been deleted!","success")
 
-    return redirect(url_for('home'))
+    return redirect(url_for('main.home'))
