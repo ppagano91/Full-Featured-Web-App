@@ -34,7 +34,7 @@ bcrypt = Bcrypt(app)
 # Login
 login_manager = LoginManager(app)
 # login_manager.login_view='<function name of a route>'
-login_manager.login_view='login'
+login_manager.login_view='users.login'
 login_manager.login_message_category='info'
 
 app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
