@@ -36,3 +36,7 @@ pip install python-dotenv or pip3 install python-dotenv
 
 
 # Acceso de aplicaciones menos seguras en Google para enviar mail
+
+LOGIN
+testuser@testuser.com
+123456
