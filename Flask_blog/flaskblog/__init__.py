@@ -6,6 +6,8 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 from flaskblog.config import Config
+from dotenv import load_dotenv
+load_dotenv()
 # import sqlalchemy
 # import secrets
 # from sqlalchemy import create_engine, MetaData
@@ -49,18 +51,12 @@ mail=Mail()
 
 
 
-
-
-
-
-
-
-
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    engine = create_engine("postgresql+psycopg2://postgres@localhost/db_flaskblog")
+    # postgresql+psycopg2://postgres:123456@localhost:5432/db_flaskblog
+    engine = create_engine(os.environ.get("DB_URI"))
 
     db.init_app(app)
     bcrypt.init_app(app)
